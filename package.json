@@ -1,0 +1,22 @@
+{
+  "name": "leaganizer",
+  "version": "1.0.0",
+  "description": "",
+  "main": "bot.ts",
+  "scripts": {
+    "build": "tsc bot.ts",
+    "run": "node bot.js",
+    "start": "yarn run build && yarn run run",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "Leonard Nolting",
+  "license": "ISC",
+  "dependencies": {
+    "discord.js": "^12.4.1",
+    "dotenv": "^8.2.0"
+  },
+  "devDependencies": {
+    "typescript": "^4.0.5"
+  }
+}
