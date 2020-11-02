@@ -4,8 +4,8 @@
   "description": "",
   "main": "bot.ts",
   "scripts": {
-    "build": "tsc bot.ts",
-    "run": "node bot.js",
+    "build": "tsc ./bot.ts",
+    "run": "node ./bot.js",
     "start": "yarn run build && yarn run run",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
