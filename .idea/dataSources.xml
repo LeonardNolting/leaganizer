@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="DataSourceManagerImpl" format="xml" multifile-model="true">
+    <data-source source="LOCAL" name="leaganizer postgres" uuid="05613116-18fd-43e1-98ca-507a49db84a9">
+      <driver-ref>postgresql</driver-ref>
+      <synchronize>true</synchronize>
+      <jdbc-driver>org.postgresql.Driver</jdbc-driver>
+      <jdbc-url>jdbc:postgresql://ec2-34-200-106-49.compute-1.amazonaws.com:5432/d6ldu6bsrq043q</jdbc-url>
+    </data-source>
+  </component>
+</project>
