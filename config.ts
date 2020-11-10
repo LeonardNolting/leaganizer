@@ -9,7 +9,6 @@ import {
 	FileOptions,
 	Guild,
 	GuildManager,
-	MessageAttachment,
 	MessageEmbed,
 	Role,
 	RoleManager,
@@ -20,7 +19,6 @@ import {ParticipantRow} from "./model/participant.js";
 import {client} from "./bot.js";
 import {TeamRow} from "./model/team.js";
 import TournamentState from "./model/tournament_state.js";
-import nodeHtmlToImage from "node-html-to-image";
 
 if (process.env.NODE_ENV !== "production") (await import("dotenv")).config()
 
@@ -169,9 +167,9 @@ const config: {
 
 				const files: FileOptions[] = ["football.png", "trophy.png"]
 					.map(name => ({name, attachment: "./assets/images/" + name }))
-				files.push(new MessageAttachment(
+				/*files.push(new MessageAttachment(
 					(await nodeHtmlToImage({html}) as Buffer), "plan.png"
-				))
+				))*/
 				const embed: MessageEmbed = new MessageEmbed()
 					.setColor(tournament.state)
 					.setTitle(config.tournament.announcement.title(tournament))
@@ -179,7 +177,7 @@ const config: {
 					.setAuthor("State: " + TournamentState[tournament.state].toUpperCase(),
 						"attachment://football.png")
 					.setThumbnail("attachment://trophy.png")
-					.setImage("attachment://plan.png")
+					// .setImage("attachment://plan.png")
 					.setDescription(Object.entries({
 						date: dateToMonthDayString(tournament.start),
 						time: tournament.state === TournamentState.Prepared ?

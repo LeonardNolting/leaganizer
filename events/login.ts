@@ -1,17 +1,5 @@
 import config from "../config.js";
-import {
-	Channel,
-	ChannelManager,
-	Guild,
-	GuildManager, MessageAttachment,
-	MessageEmbed,
-	Role,
-	RoleManager,
-	Snowflake,
-	TextChannel
-} from "discord.js";
-import nodeHtmlToImage from "node-html-to-image"
-import {TeamRow} from "../model/team.js";
+import {Channel, ChannelManager, Guild, GuildManager, Role, RoleManager, Snowflake} from "discord.js";
 
 const replace = <T, M>(what: string, object: {
 	get: (id: Snowflake, manager?: M) => T | undefined,
@@ -31,7 +19,7 @@ export default async () => {
 	config.roles.list = replace<Role, RoleManager>("role", config.roles)
 	config.channels.list = replace<Channel, ChannelManager>("channel", config.channels);
 
-	const row = (teams: TeamRow[]) => {
+	/*const row = (teams: TeamRow[]) => {
 		let columns = ""
 		for (const team of teams) columns += `<div><span>${team.name}</span></div>`
 		return columns
@@ -64,7 +52,7 @@ export default async () => {
 	await (config.channels.list.announcement as TextChannel).send(new MessageEmbed()
 		.setDescription("test tournament plan")
 		.attachFiles([new MessageAttachment((await nodeHtmlToImage({html}) as Buffer), "plan.png")])
-		.setImage("attachment://plan.png"))
+		.setImage("attachment://plan.png"))*/
 
 	console.log("logged in")
 }
