@@ -1,5 +1,5 @@
 import config from "../../config.js"
-import {Message} from "discord.js"
+import {Message, Snowflake} from "discord.js"
 import {database} from "../../bot.js"
 import Syntax from "../../model/syntax.js"
 import {TournamentRow} from "../../model/tournament.js"
@@ -15,9 +15,9 @@ export const syntax: Syntax = {
 	"timezone": {type: "IANA Time Zone Name", description: "e.g. America/New_York", optional: true}
 }
 
-export default async (message: Message, parameters: string[]) => {
+const participate = async (userId: Snowflake, timeString: string, timezone: string) => {
 	// Exists? Verified?
-	let player = await playerById(message.author.id);
+	let player = await playerById(userId);
 	if (player === null) throw new Error(await config.players.doesnt_exist())
 	else if (!player.verified) throw new Error(config.players.not_verified)
 
@@ -34,7 +34,7 @@ export default async (message: Message, parameters: string[]) => {
 		"select count(id) from participant where tournament=$1 and player=$2 and quit=to_timestamp(0)",
 		[
 			tournament.id,
-			message.author.id
+			userId
 		]).then(result => result.rows[0]["count"])
 	) throw new Error(config.tournament.participates_already)
 
@@ -42,7 +42,7 @@ export default async (message: Message, parameters: string[]) => {
 	let timeOption = null // Time already chosen -> no preferred time needed
 	if (tournament.state === TournamentState.Registered) {
 		// Time not yet chosen -> preferred time will be considered
-		const time = zonedTimeToUtc(new Date(tournament.start.toLocaleDateString('en-US') + " " + parameters[0]), parameters[1])
+		const time = zonedTimeToUtc(new Date(tournament.start.toLocaleDateString('en-US') + " " + timeString), timezone)
 		if (isNaN(time.getTime()))
 			throw new SyntaxError("time")
 
@@ -56,7 +56,7 @@ export default async (message: Message, parameters: string[]) => {
 	// Create participant
 	return await database.query("insert into participant (tournament, player, preferred_time_option) values ($1, $2, $3)", [
 		tournament.id,
-		message.author.id,
+		userId,
 		timeOption
 	]).then(async () => {
 		await updateAnnouncement(tournament)
@@ -64,3 +64,6 @@ export default async (message: Message, parameters: string[]) => {
 		return notifications.success(config.tournament.participated)
 	}).catch(e => notifications.failure(config.tournament.participate_failed))
 }
+
+export const command = (message: Message, parameters: string[]) => participate(message.author.id, parameters[0], parameters[1])
+export default participate

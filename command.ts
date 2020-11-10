@@ -3,7 +3,7 @@ import config from "./config.js";
 import Syntax from "./model/syntax.js";
 import {isStaff} from "./helpers/permissions.js";
 
-export const getCommand = async (path: string[]) => await import("./commands/" + path.join("/") + ".js")
+export const getCommand = async (path: string[]) => await import("./tasks/" + path.join("/") + ".js")
 
 export default async function command(message: Message): Promise<void> {
 	const feedback = await message.channel.send(config.commands.processing)
@@ -50,7 +50,7 @@ export default async function command(message: Message): Promise<void> {
 		(parameters.length > expectedParametersMax || parameters.length < expectedParametersMin)
 	) await feedback.edit(config.commands.wrong_amount(expectedParametersMin, expectedParametersMax, parameters.length))
 	else try {
-			const reply = await script.default(message, parameters)
+			const reply = await script.command(message, parameters)
 			if (reply instanceof MessageEmbed) await feedback.edit("", reply)
 			else await feedback.edit(reply)
 		} catch (e) {

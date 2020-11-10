@@ -1,5 +1,5 @@
 import config from "../../config.js"
-import {Message, TextChannel} from "discord.js"
+import {Message, Snowflake, TextChannel} from "discord.js"
 import {database} from "../../bot.js"
 import Syntax from "../../model/syntax.js"
 import Tournament from "../../model/tournament.js"
@@ -21,13 +21,19 @@ export const syntax: Syntax = {
 	},
 }
 
-export default async (message: Message, parameters: string[]) => {
+const register = async (
+	userId: Snowflake,
+	start: Date,
+	time_options: number,
+	time_interval: number,
+	team_size: number,
+) => {
 	// Parse parameters
 	let tournament: Tournament = {
-		start: zonedTimeToUtc(new Date(parameters[0]), parameters[1]),
-		time_options: Number.parseInt(parameters[2]),
-		time_interval: Number.parseInt(parameters[3]),
-		team_size: Number.parseInt(parameters[4]),
+		start,
+		time_options,
+		time_interval,
+		team_size,
 		state: TournamentState.Registered
 	}
 
@@ -63,7 +69,7 @@ export default async (message: Message, parameters: string[]) => {
 	) throw Error(config.tournament.already_exists_error)
 
 	// Exists? Verified?
-	const player = await playerById(message.author.id);
+	const player = await playerById(userId);
 	if (player === null) throw new Error(await config.players.doesnt_exist())
 	else if (!player.verified) throw new Error(config.players.not_verified)
 
@@ -76,10 +82,19 @@ export default async (message: Message, parameters: string[]) => {
 		TournamentState[tournament.state],
 		tournament.time_options,
 		tournament.time_interval,
-		message.author.id
+		userId
 	]).then(result => result.rows[0])
 
 	await updateAnnouncement(tournamentRow, [], [])
 
 	return notifications.success()
 }
+
+export const command = (message: Message, parameters: string[]) => register(
+	message.author.id,
+	zonedTimeToUtc(new Date(parameters[0]), parameters[1]),
+	Number.parseInt(parameters[2]),
+	Number.parseInt(parameters[3]),
+	Number.parseInt(parameters[4])
+)
+export default register
